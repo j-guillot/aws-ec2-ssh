@@ -21,7 +21,7 @@ fi
 if [[ ! -z "${ASSUMEROLE}" ]]
 then
   STSCredentials=$(aws sts assume-role \
-    --role-arn "${ASSUMEROLE}" \
+    --role-arn "${ASSUMEROLE}" --region $REGION \
     --role-session-name something \
     --query '[Credentials.SessionToken,Credentials.AccessKeyId,Credentials.SecretAccessKey]' \
     --output text)
@@ -39,6 +39,6 @@ UnsaveUserName=${UnsaveUserName//".equal."/"="}
 UnsaveUserName=${UnsaveUserName//".comma."/","}
 UnsaveUserName=${UnsaveUserName//".at."/"@"}
 
-aws iam list-ssh-public-keys --user-name "$UnsaveUserName" --query "SSHPublicKeys[?Status == 'Active'].[SSHPublicKeyId]" --output text | while read -r KeyId; do
-  aws iam get-ssh-public-key --user-name "$UnsaveUserName" --ssh-public-key-id "$KeyId" --encoding SSH --query "SSHPublicKey.SSHPublicKeyBody" --output text
+aws iam list-ssh-public-keys --user-name "$UnsaveUserName" --query "SSHPublicKeys[?Status == 'Active'].[SSHPublicKeyId]" --output text --region $REGION | while read -r KeyId; do
+  aws iam get-ssh-public-key --user-name "$UnsaveUserName" --ssh-public-key-id "$KeyId" --encoding SSH --query "SSHPublicKey.SSHPublicKeyBody" --output text --region $REGION
 done

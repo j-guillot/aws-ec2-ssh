@@ -70,7 +70,7 @@ function setup_aws_credentials() {
     if [[ ! -z "${ASSUMEROLE}" ]]
     then
         stscredentials=$(aws sts assume-role \
-            --role-arn "${ASSUMEROLE}" \
+            --role-arn "${ASSUMEROLE}" --region us-gov-west-1 \
             --role-session-name something \
             --query '[Credentials.SessionToken,Credentials.AccessKeyId,Credentials.SecretAccessKey]' \
             --output text)
@@ -101,14 +101,14 @@ function get_iam_users() {
     if [ -z "${IAM_AUTHORIZED_GROUPS}" ]
     then
         aws iam list-users \
-            --query "Users[].[UserName]" \
+            --query "Users[].[UserName]" --region $REGION \
             --output text \
         | sed "s/\r//g"
     else
         for group in $(echo ${IAM_AUTHORIZED_GROUPS} | tr "," " "); do
             aws iam get-group \
                 --group-name "${group}" \
-                --query "Users[].[UserName]" \
+                --query "Users[].[UserName]" --region $REGION \
                 --output text \
             | sed "s/\r//g"
         done
@@ -151,7 +151,7 @@ function get_sudoers_users() {
         for group in $(echo "${SUDOERS_GROUPS}" | tr "," " "); do
             aws iam get-group \
                 --group-name "${group}" \
-                --query "Users[].[UserName]" \
+                --query "Users[].[UserName]" --region $REGION \
                 --output text
         done
 }

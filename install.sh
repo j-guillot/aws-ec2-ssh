@@ -120,7 +120,7 @@ tmpdir=$(mktemp -d)
 
 cd "$tmpdir"
 
-git clone -b "$RELEASE" https://github.com/widdix/aws-ec2-ssh.git
+git clone -b "$RELEASE" https://github.com/guillot/aws-ec2-ssh.git
 
 cd "$tmpdir/aws-ec2-ssh"
 
