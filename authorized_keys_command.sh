@@ -13,6 +13,11 @@ fi
 # source configuration if it exists
 [ -f /etc/aws-ec2-ssh.conf ] && . /etc/aws-ec2-ssh.conf
 
+METADATA_TOKEN=$(curl -s -X PUT -H 'x-aws-ec2-metadata-token-ttl-seconds: 60' http://169.254.169.254/latest/api/token)
+INSTANCE_ID=$(curl -s -H "x-aws-ec2-metadata-token: ${METADATA_TOKEN}" http://169.254.169.254/latest/meta-data/instance-id)
+REGION=$(curl -s -H "x-aws-ec2-metadata-token: ${METADATA_TOKEN}" http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\" '{print $4}')
+
+
 # Assume a role before contacting AWS IAM to get users and keys.
 # This can be used if you define your users in one AWS account, while the EC2
 # instance you use this script runs in another.
